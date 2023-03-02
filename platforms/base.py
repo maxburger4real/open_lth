@@ -3,6 +3,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+# FIX https://github.com/facebookresearch/open_lth/pull/19/commits/b0e20420a4f771cef53d146c854990c99769dfd0
+
 import abc
 from dataclasses import dataclass
 import os
@@ -24,12 +26,15 @@ class Platform(Hparams):
 
     @property
     def device_str(self):
-        # GPU device.
-        if torch.cuda.is_available() and torch.cuda.device_count() > 0:
-            device_ids = ','.join([str(x) for x in range(torch.cuda.device_count())])
-            return f'cuda:{device_ids}'
 
-        # CPU device.
+        if torch.cuda.is_available():
+            return 'cuda' 
+        elif(
+            torch.backends.mps.is_available() # ensures MacOS 12.3 or greater
+            and 
+            torch.backends.mps.is_built() # ensures pytorch correct build
+            ):
+            return 'mps'
         else:
             return 'cpu'
 

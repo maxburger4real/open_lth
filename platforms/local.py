@@ -8,15 +8,16 @@ import pathlib
 
 from platforms import base
 
+project_root_path =  os.path.join(pathlib.Path.home(), 'Documents/JKU/Seminar/Practical_Work')
 
 class Platform(base.Platform):
     @property
     def root(self):
-        return os.path.join(pathlib.Path.home(), 'open_lth_data')
+        return os.path.join(project_root_path, 'open_lth_data')
 
     @property
     def dataset_root(self):
-        return os.path.join(pathlib.Path.home(), 'open_lth_datasets')
+        return os.path.join(project_root_path, 'open_lth_datasets')
 
     @property
     def imagenet_root(self):
