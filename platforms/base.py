@@ -28,15 +28,17 @@ class Platform(Hparams):
     def device_str(self):
 
         if torch.cuda.is_available():
-            return 'cuda' 
+            device = 'cuda' 
         elif(
             torch.backends.mps.is_available() # ensures MacOS 12.3 or greater
             and 
             torch.backends.mps.is_built() # ensures pytorch correct build
             ):
-            return 'mps'
+            device = 'mps'
         else:
-            return 'cpu'
+            device = 'cpu'
+        
+        return device
 
     @property
     def torch_device(self):
