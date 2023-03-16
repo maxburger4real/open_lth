@@ -107,14 +107,19 @@ class LotteryRunner(Runner):
 
     def _train_level(self, level: int):
         location = self.desc.run_path(self.replicate, level)
+        
         if models.registry.exists(location, self.desc.train_end_step): return
 
         model = models.registry.load(self.desc.run_path(self.replicate, 0), self.desc.train_start_step,
                                      self.desc.model_hparams, self.desc.train_outputs)
+        
         pruned_model = PrunedModel(model, Mask.load(location))
+
         pruned_model.save(location, self.desc.train_start_step)
+
         if self.verbose and get_platform().is_primary_process:
             print('-'*82 + '\nPruning Level {}\n'.format(level) + '-'*82)
+
         train.standard_train(pruned_model, location, self.desc.dataset_hparams, self.desc.training_hparams,
                              start_step=self.desc.train_start_step, verbose=self.verbose,
                              evaluate_every_epoch=self.evaluate_every_epoch)

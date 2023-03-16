@@ -111,9 +111,16 @@ def run_at_step(step1, callback):
 
 
 # The standard set of callbacks that should be used for a normal training run.
-def standard_callbacks(training_hparams: hparams.TrainingHparams, train_set_loader: DataLoader,
-                       test_set_loader: DataLoader, eval_on_train: bool = False, verbose: bool = True,
-                       start_step: Step = None, evaluate_every_epoch: bool = True):
+def standard_callbacks(
+        training_hparams: hparams.TrainingHparams,
+        train_set_loader: DataLoader,
+        test_set_loader: DataLoader,
+        eval_on_train: bool = False, 
+        verbose: bool = True,
+        start_step: Step = None,
+        evaluate_every_epoch: bool = True
+):
+    
     start = start_step or Step.zero(train_set_loader.iterations_per_epoch)
     end = Step.from_str(training_hparams.training_steps, train_set_loader.iterations_per_epoch)
     test_eval_callback = create_eval_callback('test', test_set_loader, verbose=verbose)
@@ -125,8 +132,8 @@ def standard_callbacks(training_hparams: hparams.TrainingHparams, train_set_load
         run_at_step(end, save_model),
         run_at_step(end, save_logger),
         run_every_epoch(checkpointing.save_checkpoint_callback),
+        # run_every_step(checkpointing.save_checkpoint_no_overwrite_callback) # TODO:
     ]
-
     # Test every epoch if requested.
     if evaluate_every_epoch: result = [run_every_epoch(test_eval_callback)] + result
     elif verbose: result.append(run_every_epoch(create_timekeeper_callback()))

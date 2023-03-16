@@ -22,6 +22,16 @@ def save_checkpoint_callback(output_location, step, model, optimizer, logger):
         }, paths.checkpoint(output_location))
     get_platform().barrier()
 
+def save_checkpoint_no_overwrite_callback(output_location, step, model, optimizer, logger):
+    if get_platform().is_primary_process:
+        get_platform().save_model({
+            'ep': step.ep,
+            'it': step.it,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'logger': str(logger),
+        }, paths.checkpoint_inc(output_location, step.ep, step.it))
+    get_platform().barrier()
 
 def restore_checkpoint(output_location, model, optimizer, iterations_per_epoch):
     checkpoint_location = paths.checkpoint(output_location)

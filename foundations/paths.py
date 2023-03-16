@@ -8,6 +8,7 @@ import os
 
 def checkpoint(root): return os.path.join(root, 'checkpoint.pth')
 
+def checkpoint_inc(root, ep, it): return os.path.join(root, f'ep{ep}it{it}checkpoint.pth')
 
 def logger(root): return os.path.join(root, 'logger')
 
